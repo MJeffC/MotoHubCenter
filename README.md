@@ -1,3 +1,3 @@
 # Project Name: Moto Hub Center
 
-This is a test
+The purpose of this project is to create a centralized website for Motorcycle enthusiasts. This is a website where a user will have a list of gear they use plus a list of motorcycles they have in collection. When they click on the gear or motorcycle it will display a list of comments of what they think of the item. This will help others try to compare between items they were trying to deciding to buy.
