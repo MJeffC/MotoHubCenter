@@ -6,30 +6,38 @@ const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const [errors, setErrors] = useState("");
+    const [err, setErr] = useState("");
+    const [successMsg, setSuccessMsg] = useState("");
 
     const handleFormSubmit = (e) => {
         e.preventDefault();
+        setErr("");
+        setSuccessMsg("");
         const postData = {
             email,
             password,
         }
 
+        // axios.post("http://localhost:8000/api/login", postData, { withCredentials: true })
         axios.post("http://localhost:8000/api/login", postData)
             .then( (response)  => {
-                console.log("SUCCESS", response);
-                navigate('/');
+                // console.log("SUCCESS", response);
+                // console.log("Success", response.data.message);
+                setSuccessMsg(response.data.message);
+                navigate('/userProfile');
             })
             .catch(( err ) => {
-                console.log(err.response.data.errors);
-                setErrors(err.response.data.errors)
+                console.log(err.response.data.err);
+                setErr(err.response.data.err)
             });
     };
 
     return (
         <div className="container">
             <form onSubmit={handleFormSubmit}>
-                <h2>Register</h2>
+                <h2>Login</h2>
+                {err && <h2 style={{ color: "red" }}>{err}</h2>}
+                {successMsg.lenth > 0 && (<h2 style={{ color: "green" }}>{successMsg}</h2>)}
                 <div style={{ width: "45%" }}>
                     <div>
                         <label htmlFor="email" className="form-label">Email</label>

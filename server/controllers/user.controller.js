@@ -7,19 +7,28 @@ const register = (req, res) => {
 
 	User.findOne({ email: body.email })
 		.then((query) => {
+			console.log("user.findOne query: ", query);
 			if (query) {
 				res.status(400).json({ error: "Email already in use" });
 				return;
+			} else {
+				const newUser = new User(body);
+
+				newUser
+					.save()
+					.then((newlyCreatedUser) => res.json(newlyCreatedUser))
+					.catch((err) => res.status(400).json(err));
 			}
 		})
-		.catch((error) => res.status(400).json(err));
-
-	const newUser = new User(body);
-
-	newUser
-		.save()
-		.then((newlyCreatedUser) => res.json(newlyCreatedUser))
 		.catch((err) => res.status(400).json(err));
+
+	// const newUser = new User(body);
+
+	// newUser
+	// 	.save()
+	// 	.then((newlyCreatedUser) => res.json(newlyCreatedUser))
+	// 	.catch((err) => res.status(400).json(err));
+
 };
 
 const login = async (req, res) => {
@@ -35,6 +44,8 @@ const login = async (req, res) => {
 	} catch (err) {
 		res.status(400).json({ error: "Email not Found" });
 	}
+
+	console.log("userQuery", userQuery);
 
 	if (userQuery === null) {
 		res.status(400).json({ error: "Email not Found" });
@@ -52,9 +63,11 @@ const login = async (req, res) => {
 	}
 
 	const userToken = jwt.sign({ id: userQuery._id }, process.env.SECRET_KEY);
-	res.cookie("usertoken", userToken, process.env.SECRET_KEY, {
+	console.log("userToken", userToken);
+
+	res.cookie("userToken", userToken, process.env.SECRET_KEY, {
 		httpOnly: true,
-		expires: new Date(Date.now() + 10000000),
+		expires: new Date(Date.now() + 9000000),
 	}).json({ message: "Successfully logged in" });
 };
 
@@ -83,7 +96,7 @@ const updateOneUser = (req, res) => {
 		runValidators: true,
 	})
 		.then((updatedUser) => res.json(updatedUser))
-		.catch((err) => res.status(404).json(err));
+		.catch((err) => res.status(404).json({ errMessage: err}));
 };
 
 const deleteOneUser = (req, res) => {
